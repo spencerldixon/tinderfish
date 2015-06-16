@@ -15,7 +15,7 @@ You'll need to follow the blog post below to modify the gem slightly.
 
 ### Blog Post
 
-Accompanying blog post and code walkthrough can be found on my website here:
+Accompanying blog post and code walkthrough can be found on my website here: http://www.spencerlloyddixon.co.uk/2015/06/16/tinderfish-hacking-tinder-for-maximum-bromance/
 
 ### Credit
 
