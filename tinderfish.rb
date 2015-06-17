@@ -1,7 +1,8 @@
 require 'pyro'
 require 'time'
+require 'httparty'
 
-OAUTH_TOKEN = "CAAGm0PX4ZCpsBABp4TKZBwhfZCu1wO5ZBaaZAwgAIhGJMNQ4vqYUZC6aZBmID7Ch6aZB8vY8fJ0GQg43AiTOGe0RjcJZAMXoV8WKxlSFRwIoqLlxTxnESCcS7fSvrVqUgcTvbmZCsX3ttVrDZAmNVaLS49lfUzgS9B2fCY09G6O5UcYyfJruFLMfxO5EOaNQZAyNTcSdTCuXWBIZA67kVc5GRqn2P0ALXyCHBZAQIZD"
+OAUTH_TOKEN = "CAAGm0PX4ZCpsBAAk0Gyyh5G2vmJSpBkuVVXJYbjE0r3SiKRQfBFma7zJYPK8uf1o353eQ8to3M3ZCKsdMGZAmlO2F78Re3qG89fTPmQ5FzwShL6Kbv2grBAKCh4ZB9sfZCuQxiBtzK6msxLI9jtJ1iXZBxVbRhTZAwJBTj0hOjXfUnLL7Fqm8LDAbtAPv9LDUlYJGVEM673ieIcgtPN8BAB5JLnDoQw298ZD"
 FACEBOOK_ID = "100009335141764"
 
 class String
@@ -59,15 +60,30 @@ class Tinderfish < TinderPyro::Client
 end
 
 class Victim
-  attr_accessor :id, :name, :bio, :messages, :last_message, :last_message_sent_at
+  attr_accessor :id, :name, :bio, :messages, :last_message, :last_message_sent_at, :photo, :match_id
 
   def initialize(match)
+    @match_id = match["_id"]
     @id = match["person"]["_id"]
     @name = match["person"]["name"]
     @bio = match["person"]["bio"]
     @messages = match["messages"].sort_by { |obj| obj["sent_date"] }
     @last_message = @messages[0]["message"].sanitise_for_name
     @last_message_sent_at = @messages[0]["sent_date"]
+    @photo = match["person"]["photos"].first["processedFiles"].first["url"]
+  end
+end
+
+class SlackChannel
+  def self.post victim, message
+    payload = {
+      channel: SETCHANNELHERE,
+      username: victim.name,
+      text: message,
+      icon_url: victim.photo
+    }
+
+    HTTParty.post("http://wwpefkwogkwrpgwrgk.slack.com", { body: { payload: payload.to_json }})
   end
 end
 
@@ -82,6 +98,8 @@ victim_one = Victim.new(matches[0])
   puts "Bio:      #{victim_one.bio}"
   puts "Message:  #{victim_one.last_message}"
   puts "----------------------------------------------------"
+
+
 victim_two = Victim.new(matches[1])
   puts "------------------- Victim Two ---------------------"
   puts "ID:       #{victim_two.id}"
@@ -92,7 +110,7 @@ victim_two = Victim.new(matches[1])
 
   puts "Sending initial message from #{victim_one.name} to #{victim_two.name}..."
 
-tinderfish.send_message(victim_two.id, victim_one.last_message)
+tinderfish.send_message(victim_two.match_id, victim_one.last_message)
 
 loop do
   puts "Waiting for new message from #{victim_two.name}..."
@@ -108,7 +126,7 @@ loop do
   puts "Sending this to #{victim_one.name}..."
   puts "----------------------------------------------------"
 
-  tinderfish.send_message(victim_one.id, victim_two.last_message)
+  tinderfish.send_message(victim_one.match_id, victim_two.last_message)
 
   until tinderfish.new_messages_from?(victim_one, victim_two.last_message_sent_at) do
     seconds = rand(120...300)
@@ -122,5 +140,5 @@ loop do
   puts "Sending this to #{victim_two.name}..."
   puts "----------------------------------------------------"
 
-  tinderfish.send_message(victim_two.id, victim_one.last_message)
+  tinderfish.send_message(victim_two.match_id, victim_one.last_message)
 end
