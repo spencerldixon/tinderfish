@@ -45,10 +45,10 @@ class Tinderfish < TinderPyro::Client
 
     if matches.any?
       message_updates_from_victim = matches.select { |match| match["messages"].first["from"] == victim.id }
-      message_updates_from_victim = message_updates_from_victim.select { |match| match["messages"].first["message"] != victim.last_message }
+      message_updates_from_victim = message_updates_from_victim.select { |match| match["messages"].last["message"] != victim.last_message }
 
       if message_updates_from_victim.any?
-        newest_message = message_updates_from_victim.first["messages"].first
+        newest_message = message_updates_from_victim.first["messages"].last
         victim.last_message = newest_message["message"].sanitise_for_name
         victim.last_message_sent_at = newest_message["sent_date"]
         true
