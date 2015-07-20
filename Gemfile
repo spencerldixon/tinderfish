@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'tinder_pyro', '~> 0.0.1', require: 'pyro'
+gem 'tinder_pyro', require: 'pyro', git: "https://github.com/spencerldixon/tinder_pyro"
 gem 'httparty', '~> 0.13.5'

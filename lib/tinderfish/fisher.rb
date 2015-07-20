@@ -38,6 +38,22 @@ module Tinderfish
       matches
     end
 
+    def make_victims
+      updates = self.fetch_all_updates
+      sleep(2)
+      matches = updates["matches"]
+      matches.each do |m|
+        local_variable_set "#{m["person"]["name"].downcase}_#{m["person"]["_id"]}".to_sym, Victim.new(m)
+
+        puts "-------------------------------"
+        puts "VID: #{m["person"]["name"].downcase}_#{m["person"]["_id"]}"
+        puts "ID: #{m["person"]["_id"]}"
+        puts "Name: #{m["person"]["name"]}"
+        puts "Bio: #{m["person"]["bio"]}"
+        puts "-------------------------------"
+      end
+    end
+
     WITH_MESSAGES = -> match { match['messages'].any? }
     LAST_MESSAGES = -> match { match['messages'].last }
     FROM_VICTIM = -> victim, message { message['from'] == victim.id }
@@ -61,7 +77,7 @@ module Tinderfish
       true
     end
 
-    def run(victim_one, victim_two)
+    def introduce(victim_one, victim_two)
       # Introduce our victims on Slack
       Tinderfish::Slack.post_as_victim(victim_one, "*Victim One*\n*Bio:* #{victim_one.bio}\n*First Message:* #{victim_one.last_message}")
       Tinderfish::Slack.post_as_victim(victim_two, "*Victim Two*\n*Bio:* #{victim_two.bio}\n*First Message:* #{victim_two.last_message}")
@@ -69,7 +85,9 @@ module Tinderfish
       # Send Initial message to kick start convo
       Tinderfish::Slack.post_as_tinderfish("Let's get started... I'm sending this from *#{victim_one.name}* to *#{victim_two.name}*\n_#{victim_one.last_message}_")
       self.send_message(victim_two.match_id, victim_one.last_message)
+    end
 
+    def run(victim_one, victim_two)
       # Main loop
       loop do
         wait_from(victim_two, victim_one.last_message_sent_at)
@@ -78,6 +96,11 @@ module Tinderfish
         wait_from(victim_one, victim_two.last_message_sent_at)
         relay_message(from: victim_one, msg: victim_one.last_message, to: victim_two)
       end
+    end
+
+    def introduce_and_run(victim_one, victim_two)
+      self.introduce(victim_one, victim_two)
+      self.run(victim_one, victim_two)
     end
 
     private

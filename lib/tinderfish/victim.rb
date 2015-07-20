@@ -2,7 +2,7 @@ require 'tinderfish/utils'
 
 module Tinderfish
   class Victim
-    attr_accessor :id, :name, :bio, :messages, :last_message, :last_message_sent_at, :photo, :match_id
+    attr_accessor :id, :name, :bio, :messages, :last_message, :last_message_sent_at, :photo, :match_id, :vid
     attr_accessor :person
 
     def initialize(match)
@@ -11,6 +11,7 @@ module Tinderfish
       self.person = match["person"]
       self.id = person["_id"]
       self.name = person["name"]
+      self.vid = "#{self.name.downcase}_#{self.id}"
       self.bio = person["bio"]
       self.messages = match["messages"].sort_by { |obj| obj["sent_date"] }
       self.last_message = messages.last["message"].sanitise_for_name
