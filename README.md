@@ -19,11 +19,11 @@ Add in your slack URL (We use a private group) and facebook, ID and TOKEN.
 
 ```tinderfish.sign_in(facebook_id, facebook_token)```
 
-Assuming you already have matches... (if not just run ```matches = tinderfish.get_nearby_users``` followed by ```tinderfish.generate_matches(matches, 3)``` where 3 is how many of your matches you want to swipe on.)
+Assuming you already have matches... (if not just run ```matches = tinderfish.get_nearby_users``` followed by ```tinderfish.generate_matches(matches, 3)``` where 3 is how many of your matches you want to swipe on).
 
 ```tinderfish.make_victims```
 
-```make_victims``` will print a list of victims and their bios to your console. Select the worst and match them up by using the VID of each user
+This will print a list of victims and their bios to your console. Select the worst and match them up by using the VID of each user
 
 ```tinderfish.introduce_and_run(victim1_12345678, victim2_87654321)```
 
