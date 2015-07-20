@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+require 'tinderfish'
+
+OAUTH_TOKEN = "XXXXXXXXXX"
+FACEBOOK_ID = "XXXXXXXXXX"
+
+# Sign in
+# tinderfish = Tinderfish::Fisher.new
+# tinderfish.sign_in(FACEBOOK_ID, OAUTH_TOKEN)
+
+# Select first two victims
+# victim_one = Victim.new(matches[0])
+# victim_two = Victim.new(matches[1])
+
+# Manually match our victims
+# matches = tinderfish.get_matches_with_messages(1)
+# v1 = matches.select { |match| match["person"]["_id"] == "XXXX" }
+# victim_one = Victim.new(v1.first)
+#
+# matches = tinderfish.get_matches_with_messages(3)
+# v2 = matches.select { |match| match["person"]["_id"] == "XXXX" }
+# victim_two = Victim.new(v2.first)
+
+# Run the program
+#tinderfish.run(victim_one, victim_two)
+
